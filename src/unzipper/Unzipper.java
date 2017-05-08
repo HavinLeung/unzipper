@@ -8,16 +8,19 @@ package unzipper;
 import java.io.File;
 import javax.swing.JOptionPane;
 import javax.swing.JFrame;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import java.lang.StringBuilder;
 /**
  *
  * @author havinleung
  */
-public class NewJFrame extends javax.swing.JFrame {
+public class Unzipper extends javax.swing.JFrame {
 
     /**
      * Creates new form NewJFrame
      */
-    public NewJFrame() {
+    public Unzipper() {
         initComponents();
     }
 
@@ -98,6 +101,11 @@ public class NewJFrame extends javax.swing.JFrame {
         jTextField3.setText("10");
 
         jButton1.setText("Unzip!");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -182,7 +190,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
        // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
-
+/*
     private void jTextField2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField2FocusLost
         //simple error checking
         try {
@@ -209,11 +217,62 @@ public class NewJFrame extends javax.swing.JFrame {
             return;
           } 
     }//GEN-LAST:event_jTextField2FocusLost
+*/
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        int start = 1;
+        int end = 1;
+        try{
+            start = Integer.parseInt(jTextField2.getText());
+            end = Integer.parseInt(jTextField3.getText());
+            if(start>end){
+                JOptionPane.showMessageDialog(new JFrame(), "Minimum size is larger than maximum size!","Error",JOptionPane.ERROR_MESSAGE);
+            }
+        }catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(new JFrame(), "Password size must be an integer","Error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-    public void unzip(String filename, char[] pw){
+        String filename = jTextField1.getText();
         
-    }
-    public int nextpw(char[] pw, int last){//generates next possible password
+        int unzipped = 0;
+        for(int i=start;i<=end&&unzipped==0;i++){
+            //initialise char array of i length
+            char[] pw = new char[i];
+            for(int j=0;j<i;j++){
+                pw[j]=33;
+            }
+            while(unzipped==0){
+            try{
+                ZipFile zipfile = new ZipFile(filename);
+                if(zipfile.isEncrypted()){
+                    zipfile.setPassword(pw);
+                    System.out.println(pw);
+                }
+                zipfile.extractAll(fileToFolder(filename));
+                String successmessage = "Success! The password is: ";
+                String successmessage2 = String.copyValueOf(pw);
+                successmessage += successmessage2;
+                JOptionPane.showMessageDialog(new JFrame(), successmessage);
+                unzipped=1;
+                break;
+            }catch(ZipException e){
+                int hello = nextpw(pw,i-1, i-1); //if no password w/ current amount of characters
+                if(hello==0){
+                    break;
+                }
+                continue;
+            }
+            }
+        }
+        if(unzipped==0){
+            JOptionPane.showMessageDialog(new JFrame(), "Brute force failed!");
+
+        }
+
+                
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    public int nextpw(char[] pw, int last, int max){//generates next possible password
         while(pw[0]<=126){
             if(pw[last]==126){ //if current character is maxed out, move back to next character
                 if(last==0){ //if first character is maxed out, all possibilities exhausted
@@ -223,13 +282,29 @@ public class NewJFrame extends javax.swing.JFrame {
             }
             if(pw[last]<126){
                 pw[last]+=1;
-                for(int i = last+1; pw[i]!='\0';i++){ //reset all characters past "last"
+                for(int i = last+1; i<=max;i++){ //reset all characters past "last"
                     pw[i]=33; 
                 }
                 return 1; 
             }
         }
         return 0;
+    }
+        public String fileToFolder(String test) {
+        //System.out.println(test);
+        StringBuilder testing = new StringBuilder(test);
+        int end = test.length()-1;
+        int loop=1;
+        int start=end;
+        for(int i = end;i>=0&&loop==1;i--){
+        	if(test.charAt(i)=='/'){
+        		start = i;
+        		loop = 0;
+        	}
+        }
+        testing.delete(start+1,end+1);
+        return testing.toString();
+		//System.out.println(test);
     }
     
     /**
@@ -249,20 +324,21 @@ public class NewJFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Unzipper.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Unzipper.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Unzipper.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Unzipper.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new NewJFrame().setVisible(true);
+                new Unzipper().setVisible(true);
             }
         });
     }
