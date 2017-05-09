@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JFrame;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
-import java.lang.StringBuilder;
+
 /**
  *
  * @author havinleung
@@ -34,8 +34,6 @@ public class Unzipper extends javax.swing.JFrame {
     private void initComponents() {
 
         fileChooser = new javax.swing.JFileChooser();
-        jDialog1 = new javax.swing.JDialog();
-        jLabel4 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         OpenFileChooser = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -45,28 +43,6 @@ public class Unzipper extends javax.swing.JFrame {
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-
-        jDialog1.setTitle("ERROR");
-        jDialog1.setAlwaysOnTop(true);
-
-        jLabel4.setText("ERROR: Must be an integer between 1-20");
-
-        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
-        jDialog1.getContentPane().setLayout(jDialog1Layout);
-        jDialog1Layout.setHorizontalGroup(
-            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialog1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jDialog1Layout.setVerticalGroup(
-            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialog1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -81,22 +57,11 @@ public class Unzipper extends javax.swing.JFrame {
 
         jLabel1.setText("File:");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
-
         jLabel2.setText("Minimum password characters:");
 
         jLabel3.setText("Maximum password characters:");
 
         jTextField2.setText("5");
-        jTextField2.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextField2FocusLost(evt);
-            }
-        });
 
         jTextField3.setText("10");
 
@@ -186,38 +151,7 @@ public class Unzipper extends javax.swing.JFrame {
             System.out.println("File access cancelled by user.");
         }
     }//GEN-LAST:event_OpenFileChooserActionPerformed
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-       // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-/*
-    private void jTextField2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField2FocusLost
-        //simple error checking
-        try {
-            int x = Integer.parseInt(jTextField2.getText());
-            int y = Integer.parseInt(jTextField3.getText());
-            if(x>y){
-                JOptionPane.showMessageDialog(new JFrame(), "Minimum size cannot be larger than maximum size","Error",JOptionPane.ERROR_MESSAGE);
-                jTextField2.setText("5"); 
-                return;
-            }
-            if(x<1){
-                JOptionPane.showMessageDialog(new JFrame(), "Password size must be greater than 0","Error",JOptionPane.ERROR_MESSAGE);
-                jTextField2.setText("5");
-                return;
-            }
-            if(x>10){
-                JOptionPane.showMessageDialog(new JFrame(), "Password size must be less than 11","Error",JOptionPane.ERROR_MESSAGE);
-                jTextField2.setText("5");
-                return;
-            }
-          } catch (NumberFormatException e) {
-              JOptionPane.showMessageDialog(new JFrame(), "Password size must be an integer","Error",JOptionPane.ERROR_MESSAGE);
-              jTextField2.setText("5");
-            return;
-          } 
-    }//GEN-LAST:event_jTextField2FocusLost
-*/
+/**/
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         int start = 1;
         int end = 1;
@@ -347,11 +281,9 @@ public class Unzipper extends javax.swing.JFrame {
     private javax.swing.JButton OpenFileChooser;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JButton jButton1;
-    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
