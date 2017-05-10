@@ -153,21 +153,33 @@ public class Unzipper extends javax.swing.JFrame {
     }//GEN-LAST:event_OpenFileChooserActionPerformed
 /**/
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
         int start = 1;
         int end = 1;
         try{
             start = Integer.parseInt(jTextField2.getText());
             end = Integer.parseInt(jTextField3.getText());
             if(start>end){
-                JOptionPane.showMessageDialog(new JFrame(), "Minimum size is larger than maximum size!","Error",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(), "Minimum size is larger than maximum size","Error",JOptionPane.ERROR_MESSAGE);
+                return;
             }
         }catch(NumberFormatException e){
             JOptionPane.showMessageDialog(new JFrame(), "Password size must be an integer","Error",JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        String filename = jTextField1.getText();
-        
+        String filename = jTextField1.getText().toLowerCase();
+        if(!filename.endsWith(".zip")){ //not a zip file
+            JOptionPane.showMessageDialog(new JFrame(), "The file selected is not a ZIP file","Error",JOptionPane.ERROR_MESSAGE);            
+            return;
+        }
+        //create a folder called unzipped
+        String newfolder = fileToFolder(filename)+"unzipped_folder";
+        boolean success=(new File(newfolder)).mkdirs();
+        if(!success){
+            JOptionPane.showMessageDialog(new JFrame(), "Failed to create folder \"unzipped_folder\"","Error",JOptionPane.ERROR_MESSAGE);            
+            return;            
+        }
         int unzipped = 0;
         for(int i=start;i<=end&&unzipped==0;i++){
             //initialise char array of i length
@@ -182,7 +194,7 @@ public class Unzipper extends javax.swing.JFrame {
                     zipfile.setPassword(pw);
                     System.out.println(pw);
                 }
-                zipfile.extractAll(fileToFolder(filename));
+                zipfile.extractAll(newfolder);
                 String successmessage = "Success! The password is: ";
                 String successmessage2 = String.copyValueOf(pw);
                 successmessage += successmessage2;
