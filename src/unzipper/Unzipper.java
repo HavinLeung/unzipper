@@ -57,6 +57,8 @@ public class Unzipper extends javax.swing.JFrame {
 
         jLabel1.setText("File:");
 
+        jTextField1.setEditable(false);
+
         jLabel2.setText("Minimum password characters:");
 
         jLabel3.setText("Maximum password characters:");
