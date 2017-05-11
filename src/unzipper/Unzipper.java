@@ -163,6 +163,10 @@ public class Unzipper extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(new JFrame(), "Minimum size is larger than maximum size","Error",JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            if(start<1){
+                JOptionPane.showMessageDialog(new JFrame(), "Password size must be greater than zero","Error",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }catch(NumberFormatException e){
             JOptionPane.showMessageDialog(new JFrame(), "Password size must be an integer","Error",JOptionPane.ERROR_MESSAGE);
             return;
@@ -173,13 +177,25 @@ public class Unzipper extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(new JFrame(), "The file selected is not a ZIP file","Error",JOptionPane.ERROR_MESSAGE);            
             return;
         }
-        //create a folder called unzipped
-        String newfolder = fileToFolder(filename)+"unzipped_folder";
-        boolean success=(new File(newfolder)).mkdirs();
+        //create a directory called unzipped
+        String newfoldername = fileToFolder(filename)+"unzipped_folder";
+        File newfolder = new File(newfoldername);
+        
+        //renaming method if directory name exists already
+        int counter = 0;
+        while(newfolder.exists()&&counter<100){
+            counter++;
+            newfolder = new File(newfoldername+"("+counter+")");
+        }
+        boolean success=newfolder.mkdir();
+        if(counter!=0){
+            newfoldername = newfoldername+"("+counter+")";
+        }
         if(!success){
             JOptionPane.showMessageDialog(new JFrame(), "Failed to create folder \"unzipped_folder\"","Error",JOptionPane.ERROR_MESSAGE);            
             return;            
         }
+        //brute force algorithm
         int unzipped = 0;
         for(int i=start;i<=end&&unzipped==0;i++){
             //initialise char array of i length
@@ -194,7 +210,9 @@ public class Unzipper extends javax.swing.JFrame {
                     zipfile.setPassword(pw);
                     System.out.println(pw);
                 }
-                zipfile.extractAll(newfolder);
+                zipfile.extractAll(newfoldername);
+                
+                //output success and password
                 String successmessage = "Success! The password is: ";
                 String successmessage2 = String.copyValueOf(pw);
                 successmessage += successmessage2;
@@ -203,16 +221,24 @@ public class Unzipper extends javax.swing.JFrame {
                 break;
             }catch(ZipException e){
                 int hello = nextpw(pw,i-1, i-1); //if no password w/ current amount of characters
-                if(hello==0){
+                if(hello==0){ //run out of possibilities
                     break;
                 }
                 continue;
             }
             }
         }
+        
         if(unzipped==0){
             JOptionPane.showMessageDialog(new JFrame(), "Brute force failed!");
-
+            //clean directory
+            for(File file: newfolder.listFiles()) {
+                if (!file.isDirectory()) {
+                    file.delete();
+                }
+            }
+            //delete directory
+            newfolder.delete();
         }
 
                 
