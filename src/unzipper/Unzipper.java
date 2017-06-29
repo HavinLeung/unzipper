@@ -8,6 +8,7 @@ package unzipper;
 import java.io.File;
 import javax.swing.JOptionPane;
 import javax.swing.JFrame;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -146,6 +147,8 @@ public class Unzipper extends javax.swing.JFrame {
 
     private void OpenFileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenFileChooserActionPerformed
         int returnVal = fileChooser.showOpenDialog(this);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("ZIP FILES", "zip");
+        fileChooser.setFileFilter(filter);
         if (returnVal == fileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
               jTextField1.setText(file.getAbsolutePath());
@@ -155,7 +158,7 @@ public class Unzipper extends javax.swing.JFrame {
     }//GEN-LAST:event_OpenFileChooserActionPerformed
 /**/
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+        //simple error checking
         int start = 1;
         int end = 1;
         try{
@@ -175,23 +178,23 @@ public class Unzipper extends javax.swing.JFrame {
         }
 
         String filename = jTextField1.getText().toLowerCase();
-        if(!filename.endsWith(".zip")){ //not a zip file
+        if(!filename.endsWith(".zip")){ //wrong file ext.
             JOptionPane.showMessageDialog(new JFrame(), "The file selected is not a ZIP file","Error",JOptionPane.ERROR_MESSAGE);            
             return;
         }
         //create a directory called unzipped
-        String newfoldername = fileToFolder(filename)+"unzipped_folder";
-        File newfolder = new File(newfoldername);
+        String newFolderName = unzipFunctions.fileToFolder(filename)+"unzipped_folder";
+        File newFolder = new File(newFolderName);
         
         //renaming method if directory name exists already
         int counter = 0;
-        while(newfolder.exists()&&counter<100){
+        while(newFolder.exists()&&counter<100){
             counter++;
-            newfolder = new File(newfoldername+"("+counter+")");
+            newFolder = new File(newFolderName+"("+counter+")");
         }
-        boolean success=newfolder.mkdir();
+        boolean success=newFolder.mkdir();
         if(counter!=0){
-            newfoldername = newfoldername+"("+counter+")";
+            newFolderName = newFolderName+"("+counter+")";
         }
         if(!success){
             JOptionPane.showMessageDialog(new JFrame(), "Failed to create folder \"unzipped_folder\"","Error",JOptionPane.ERROR_MESSAGE);            
@@ -212,7 +215,7 @@ public class Unzipper extends javax.swing.JFrame {
                     zipfile.setPassword(pw);
                     System.out.println(pw);
                 }
-                zipfile.extractAll(newfoldername);
+                zipfile.extractAll(newFolderName);
                 
                 //output success and password
                 String successmessage = "Success! The password is: ";
@@ -222,7 +225,7 @@ public class Unzipper extends javax.swing.JFrame {
                 unzipped=1;
                 break;
             }catch(ZipException e){
-                int hello = nextpw(pw,i-1, i-1); //if no password w/ current amount of characters
+                int hello = unzipFunctions.nextpw(pw,i-1, i-1); //if no password w/ current amount of characters
                 if(hello==0){ //run out of possibilities
                     break;
                 }
@@ -234,52 +237,18 @@ public class Unzipper extends javax.swing.JFrame {
         if(unzipped==0){
             JOptionPane.showMessageDialog(new JFrame(), "Brute force failed!");
             //clean directory
-            for(File file: newfolder.listFiles()) {
+            for(File file: newFolder.listFiles()) {
                 if (!file.isDirectory()) {
                     file.delete();
                 }
             }
             //delete directory
-            newfolder.delete();
+            newFolder.delete();
         }
 
                 
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    public int nextpw(char[] pw, int last, int max){//generates next possible password
-        while(pw[0]<=126){
-            if(pw[last]==126){ //if current character is maxed out, move back to next character
-                if(last==0){ //if first character is maxed out, all possibilities exhausted
-                    return 0;
-                }
-                last--;
-            }
-            if(pw[last]<126){
-                pw[last]+=1;
-                for(int i = last+1; i<=max;i++){ //reset all characters past "last"
-                    pw[i]=33; 
-                }
-                return 1; 
-            }
-        }
-        return 0;
-    }
-        public String fileToFolder(String test) {
-        //System.out.println(test);
-        StringBuilder testing = new StringBuilder(test);
-        int end = test.length()-1;
-        int loop=1;
-        int start=end;
-        for(int i = end;i>=0&&loop==1;i--){
-        	if(test.charAt(i)=='/'){
-        		start = i;
-        		loop = 0;
-        	}
-        }
-        testing.delete(start+1,end+1);
-        return testing.toString();
-		//System.out.println(test);
-    }
     
     /**
      * @param args the command line arguments
